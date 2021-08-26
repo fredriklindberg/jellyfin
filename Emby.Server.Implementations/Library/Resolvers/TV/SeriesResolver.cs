@@ -48,12 +48,16 @@ namespace Emby.Server.Implementations.Library.Resolvers.TV
         /// <returns>Series.</returns>
         protected override Series Resolve(ItemResolveArgs args)
         {
+            var seriesResolver = new Naming.TV.SeriesResolver(_libraryManager.GetNamingOptions());
+
             if (args.IsDirectory)
             {
                 if (args.HasParent<Series>() || args.HasParent<Season>())
                 {
                     return null;
                 }
+
+                var seriesInfo = seriesResolver.Resolve(args.Path);
 
                 var collectionType = args.GetCollectionType();
                 if (string.Equals(collectionType, CollectionType.TvShows, StringComparison.OrdinalIgnoreCase))
@@ -64,7 +68,7 @@ namespace Emby.Server.Implementations.Library.Resolvers.TV
                         return new Series
                         {
                             Path = args.Path,
-                            Name = Path.GetFileName(args.Path)
+                            Name = seriesInfo.Name
                         };
                     }
                 }
@@ -81,7 +85,7 @@ namespace Emby.Server.Implementations.Library.Resolvers.TV
                         return new Series
                         {
                             Path = args.Path,
-                            Name = Path.GetFileName(args.Path)
+                            Name = seriesInfo.Name
                         };
                     }
 
@@ -95,7 +99,7 @@ namespace Emby.Server.Implementations.Library.Resolvers.TV
                         return new Series
                         {
                             Path = args.Path,
-                            Name = Path.GetFileName(args.Path)
+                            Name = seriesInfo.Name
                         };
                     }
                 }
